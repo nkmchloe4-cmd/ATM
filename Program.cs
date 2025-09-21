@@ -22,17 +22,26 @@
             Console.Write("Ange din fyrsiffriga PIN-kod: ");
             string pin = Console.ReadLine();
 
-                Customer customer = null;
 
+            
+            if (pin.Length != 4 || !int.TryParse(pin, out _))
+            {
+                Console.WriteLine("PIN-koden måste vara frysiffrig.");
+                return;
+            }
+            
+            Customer customer = null;
+            
             foreach (var c in customers)
             {
-                if (c.Person.BankAccount == bankAccount && c.ValidateAccount(pin))
+                if (c.Person.BankAccount == bankAccount && c.Authenticate(pin))
                 {
                     customer = c;
                     break;
                 }
             }
-            if (pin.Length != 4 || !int.TryParse(pin, out _ ))
+            
+            if (customer == null)
             {
                 Console.WriteLine("Ogiltig bankkonto eller PIN-kod.");
                 return;
@@ -51,39 +60,43 @@
                 switch (choice)
                 {
                     case "1":
-                        Console.WriteLine($"Din saldo är: {customer.Account.Balance:C}");
+                        Console.WriteLine($"\nDin saldo är: {customer.Account.Balance:C}");
                         break;
                     case "2":
-                        Console.Write("Slå in summan pengar du vill sätta in: ");
+                        Console.Write("\nSlå in summan pengar du vill sätta in: ");
                         if (decimal.TryParse(Console.ReadLine(), out decimal depositAmount) && depositAmount > 0)
                         {
                             customer.Account.Deposit(depositAmount);
-                            Console.WriteLine("Du lyckades!!");
+                            Console.WriteLine("\nDu lyckades!!");
+                            Console.WriteLine("\nDin nya saldo är: {customer.Account.Balance:C}");
                         }
                         else
                         {
-                            Console.WriteLine("Ogiltig summa.");
+                            Console.WriteLine("\nOgiltig summa.");
                         }
                         break;
                     case "3":
-                        Console.Write("Ange summan pengar du vill ta ut: ");
+                        Console.Write("\nAnge summan pengar du vill ta ut: ");
                         if (decimal.TryParse(Console.ReadLine(), out decimal withdrawAmount))
                         {
-                           if (customer.Account.Withdraw(withdrawAmount))
-                            Console.WriteLine("Uttag lyckades.");
-                           else
-                                Console.WriteLine("Uttag överstiger saldo");
+                            if (customer.Account.Withdraw(withdrawAmount))
+                            {
+                                Console.WriteLine("\nUttag lyckades.");
+                                Console.WriteLine($"Nytt saldo: {customer.Account.Balance:C}");
+                            }
+                            else
+                                Console.WriteLine("\nUttag överstiger saldo");
                         }
                         else
                         {
-                            Console.WriteLine("Ogiltig summa.");
+                            Console.WriteLine("\nOgiltig summa.");
                         }
                         break;
                     case "4":
-                        Console.WriteLine("Tack för du använde Nordens ATM. Hejdå!");
+                        Console.WriteLine("\nTack för du använde Nordens ATM. Hejdå!");
                         return;
                     default:
-                        Console.WriteLine("Ogiltig val. Vargod och försök igen.");
+                        Console.WriteLine("\nOgiltig val. Vargod och försök igen.");
                         break;
                 }
 

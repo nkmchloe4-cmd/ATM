@@ -45,13 +45,14 @@ namespace ATM
 
     public class Customer
     {
+                private string Pin { get; }
+
         public Person Person { get; }
         public BankAccount Account { get; }
-        private string Pin { get; }
 
         public Customer(Person person, string pin)
         {
-            Person = Person;
+            Person = person;
             Account = new BankAccount();
             Pin = pin;
         }
@@ -61,7 +62,7 @@ namespace ATM
             return pin == Pin;
         }
 
-        public bool ValidateAccount(string pin)
+        public bool Authenticate(string pin)
         {
             {
                 return ValidatePin(pin);
