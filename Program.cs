@@ -16,37 +16,43 @@
             Console.WriteLine("Välkommen till Nordens ATM!");
             Console.WriteLine("==========================================");
 
-            Console.Write("Slå in ditt bankkonto : ");
-            string bankAccount = Console.ReadLine();
-
-            Console.Write("Ange din fyrsiffriga PIN-kod: ");
-            string pin = Console.ReadLine();
-
-
-            
-            if (pin.Length != 4 || !int.TryParse(pin, out _))
-            {
-                Console.WriteLine("PIN-koden måste vara frysiffrig.");
-                return;
-            }
-            
             Customer customer = null;
-            
-            foreach (var c in customers)
+
+            while (customer == null)
             {
-                if (c.Person.BankAccount == bankAccount && c.Authenticate(pin))
+                Console.Write("Slå in ditt bankkonto [10 siffror] : ");
+                string bankAccount = Console.ReadLine();
+
+                Console.Write("Ange din fyrsiffriga PIN-kod: ");
+                string pin = Console.ReadLine();
+
+                if (bankAccount == null || pin == null)
                 {
-                    customer = c;
-                    break;
+                    Console.WriteLine("\nDu måste ange både bankonto och PIN-kod");
+                }
+
+                if (pin.Length != 4 || !int.TryParse(pin, out _))
+                {
+                    Console.WriteLine("\nPIN-koden måste vara frysiffrig.");
+                    continue;
+                }
+
+                foreach (var c in customers)
+                {
+                    if (c.Person.BankAccount == bankAccount && c.Authenticate(pin))
+                    {
+                        customer = c;
+                        break;
+                    }
+                }
+
+                if (customer == null)
+                {
+                    Console.WriteLine("\nOgiltig bankkonto eller PIN-kod.");
                 }
             }
-            
-            if (customer == null)
-            {
-                Console.WriteLine("Ogiltig bankkonto eller PIN-kod.");
-                return;
-            }
-            Console.WriteLine($"Välkommen, {customer.Person.Name}!");
+                
+                Console.WriteLine($"Välkommen, {customer.Person.Name}!");
           
             while (true)
             {
@@ -68,7 +74,7 @@
                         {
                             customer.Account.Deposit(depositAmount);
                             Console.WriteLine("\nDu lyckades!!");
-                            Console.WriteLine("\nDin nya saldo är: {customer.Account.Balance:C}");
+                            Console.WriteLine($"Din nya saldo är: {customer.Account.Balance:C}");
                         }
                         else
                         {
